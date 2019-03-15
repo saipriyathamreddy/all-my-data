@@ -1,0 +1,11 @@
+---
+- hosts: server2
+  become: yes
+  remote_user: root
+  tasks:
+     - name : git installing on server 2
+       yum: name=git state=present
+     - name: Checking installed version of GIT
+       shell: "git --version"
+       register: result
+     - debug: var=result

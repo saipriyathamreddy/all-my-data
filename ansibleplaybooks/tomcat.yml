@@ -1,0 +1,25 @@
+---
+- hosts: webservers
+  become: yes
+  remote_user: ansadmin
+  gather_facts: False
+  tasks:
+     - name: Install JDK in remote system
+       yum: name=java-1.8* state=present
+     - name: Download the Apache-tomcat
+       get_url: url=http://mirrors.estointernet.in/apache/tomcat/tomcat-9/v9.0.16/bin/apache-tomcat-9.0.16.tar.gz
+                  dest=/home/ansadmin/
+     - name: Untar the file
+       command: tar -xvf /home/ansadmin/apache-tomcat-9.0.16.tar.gz -C /home/ansadmin/     
+     - name: Changing File permissions
+       command: chmod -R 0777 /home/ansadmin/apache-tomcat-9.0.16
+     - name: Copy the Context file
+       copy: src=/home/ansadmin/playbook/ansibleplaybooks/context.xml dest=/home/ansadmin/apache-tomcat-9.0.16/webapps/host-manager/META-INF/
+     - name: Copy the context file
+       copy: src=/home/ansadmin/playbook/ansibleplaybooks/context.xml dest=/home/ansadmin/apache-tomcat-9.0.16/webapps/manager/META-INF/
+     - name: Copy the tomcat-users.xml
+       copy: src=/home/ansadmin/playbook/ansibleplaybooks/tomcat-users.xml dest=/home/ansadmin/apache-tomcat-9.0.16/conf/
+     - name: Start the Tomcat
+       shell: "nohup /home/ansadmin/apache-tomcat-9.0.16/bin/startup.sh"
+       register: result
+     - debug: var=result

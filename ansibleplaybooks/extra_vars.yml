@@ -1,0 +1,30 @@
+---
+- hosts: '{{host}}'
+  become: yes
+  remote_user: ansadmin
+  vars:
+    pkg1: httpd
+  vars_files:
+      - abc.yml
+  vars_prompt:
+      - name: pkg3
+        prompt: enter user specific package
+        private: no
+  tasks:
+     - name: Installing httpd package
+       yum: name={{pkg1}} state=present
+     - name: copy the index.html file
+       copy: src=/home/ansadmin/index.html dest=/var/www/html/
+       notify: Apache restart
+     - name: Installing telnet 
+       yum: name={{pkg2}} state=present
+     - name: Installing user specific package
+       yum: name={{pkg3}} state=present
+     - name: checking java version
+       shell: java -version
+       register: result
+     - debug: var=result
+  handlers: 
+     - name: Apache restart
+       service: name={{pkg1}} state=restarted
+

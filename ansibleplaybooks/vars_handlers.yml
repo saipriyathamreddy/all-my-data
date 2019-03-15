@@ -1,0 +1,26 @@
+---
+- hosts: webservers
+  become: yes
+  remote_user: root
+  gather_facts: False
+  vars:
+    pkg1: httpd
+  vars_files:
+       - abc.yml
+  vars_prompt:
+       - name: pkg3
+         prompt: enter user specific package
+         private: no
+  tasks:
+    - name: Installing Httpd
+      yum: name={{pkg1}} state=present
+    - name: Copy file
+      copy: src=/root/ansible-playbooks/index.html dest=/var/www/html/
+      notify: service restart
+    - name: Installing Telnet
+      yum: name={{pkg2}} state=present
+    - name: install user specific package
+      yum: name={{pkg3}} state=present
+  handlers:
+    - name: service restart
+      service: name={{pkg1}} state=restarted

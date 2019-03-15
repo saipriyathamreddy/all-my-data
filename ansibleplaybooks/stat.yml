@@ -1,0 +1,11 @@
+---
+- hosts: all
+  become: yes
+  remote_user: ansadmin
+  tasks:
+      - name: stat module
+        stat: path=/home/jenkins/agent.jar
+        register: result
+      - debug: 
+          msg: "the file exists"
+        when: result.stat.exists

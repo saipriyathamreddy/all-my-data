@@ -1,0 +1,12 @@
+---
+- hosts: webservers
+  become: yes
+  remote_user: ansadmin
+  tasks:
+     - name: Install Apache on redhat
+       yum: name=httpd state=present
+       when: ansible_os_family == "RedHat"
+     - name: Install Apache on ubuntu
+       apt: name=httpd state=present
+       when: ansible_os_family == "Debian"
+

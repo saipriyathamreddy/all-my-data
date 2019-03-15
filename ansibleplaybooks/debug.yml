@@ -1,0 +1,9 @@
+---
+- hosts: server2
+  become: yes
+  remote_user: root
+  tasks:
+     - name: Checking installed java version
+       shell: "java -version"
+       register: result
+     - debug: var=result
